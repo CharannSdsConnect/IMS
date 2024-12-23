@@ -657,6 +657,33 @@ public class ProductSoldServiceImpl implements ProductSoldService {
         });
         return "Expiry Report Created";
     }
+
+    @Override
+    public void generateExpiryReport(HttpServletResponse response) throws IOException {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Customer Yearly Report");
+        HSSFRow row = sheet.createRow(0);
+        row.createCell(0).setCellValue("Id");
+        row.createCell(1).setCellValue("Product Id");
+        row.createCell(2).setCellValue("Product Name");
+        row.createCell(3).setCellValue("Expired on");
+
+        List<ExpiryReport> expiryReportList = expiryReportRepo.findAll();
+        int dataRowIndex = 1;
+        for (ExpiryReport expiryReport: expiryReportList) {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex);
+            dataRow.createCell(0).setCellValue(expiryReport.getId());
+            dataRow.createCell(1).setCellValue(expiryReport.getProdId());
+            dataRow.createCell(2).setCellValue(expiryReport.getProdName());
+            dataRow.createCell(3).setCellValue(expiryReport.getExpiredOn());
+
+            dataRowIndex++;
+        }
+        ServletOutputStream ops= response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
+    }
 }
 
 
