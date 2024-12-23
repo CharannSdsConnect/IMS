@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 public class ProductSoldController {
 
     @Autowired
@@ -202,11 +203,23 @@ public class ProductSoldController {
     }
 
     @GetMapping("/get-expiry-report")
-    public ResponseEntity<String> getCustomerYearlyReport(LocalDate localDate) {
+    public ResponseEntity<String> getExpiryReport(LocalDate localDate) {
         return new ResponseEntity<>(
                 productSoldService.getExpiryReport(),
                 HttpStatus.ACCEPTED
         );
+    }
+
+    @GetMapping("/download-expiry-report")
+    public void generateExpiryReport(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+
+        String headerkey = "Content-Disposition";
+        String headerValue = "attachment;filename=expiry_report.xls";
+
+        response.setHeader(headerkey, headerValue);
+
+        productSoldService.generateCustomerYearlyReport(response);
     }
 
     @GetMapping("/order-status/{id}")
