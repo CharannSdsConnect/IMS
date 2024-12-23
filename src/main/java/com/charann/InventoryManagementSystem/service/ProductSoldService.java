@@ -53,5 +53,7 @@ public interface ProductSoldService {
     void generateCustomerYearlyReport(HttpServletResponse response) throws IOException;
 
     String getExpiryReport();
+
+    void generateExpiryReport(HttpServletResponse response)throws IOException;
 }
 
